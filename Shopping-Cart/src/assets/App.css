@@ -118,7 +118,7 @@
   font-size: 0.95em;
 }
 
-/* Responsive */
+/*for Making it Responsive */
 @media (max-width: 600px) {
   .cart-header,
   .cart-item {

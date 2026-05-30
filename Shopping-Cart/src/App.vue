@@ -2,18 +2,17 @@
 import { ref, computed } from 'vue'
 import './assets/App.css'
 
-// Shopping Cart Data
+
 const cart = ref([
   { id: 1, name: "Cola", price: 3, quantity: 10 },
   { id: 2, name: "Chips", price: 6, quantity: 8 }
 ])
 
-// Delete Item Function
 const deleteItem = (id) => {
   cart.value = cart.value.filter(item => item.id !== id)
 }
 
-// compute() function - Required for homework
+
 const compute = () => {
   let total = 0
   cart.value.forEach(item => {
@@ -22,7 +21,6 @@ const compute = () => {
   return total
 }
 
-// Auto update total
 const totalAmount = computed(() => compute())
 </script>
 
