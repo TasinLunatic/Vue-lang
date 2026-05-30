@@ -1,0 +1,128 @@
+.container {
+  max-width: 850px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.2em;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+.cart-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+.cart-header {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  padding: 15px 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 110px;
+  font-weight: 600;
+  font-size: 1.05em;
+}
+
+.cart-item {
+  padding: 15px 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 110px;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.product-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.emoji {
+  font-size: 1.4em;
+}
+
+.price, .quantity, .subtotal {
+  font-weight: 500;
+}
+
+.subtotal {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: all 0.3s;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+.total-section {
+  margin-top: 25px;
+  background: #f0f8f0;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid #2ecc71;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.total-section h2 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1.6em;
+}
+
+.total-amount {
+  color: #27ae60;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+.note {
+  color: #7f8c8d;
+  margin-top: 10px;
+  font-size: 0.95em;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .cart-header,
+  .cart-item {
+    grid-template-columns: 2fr 1fr 1fr 1fr 90px;
+    font-size: 0.9em;
+  }
+}
