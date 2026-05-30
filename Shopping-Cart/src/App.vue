@@ -1,60 +1,64 @@
 <script setup>
 import { ref, computed } from 'vue'
+import './assets/App.css'
 
-// Shopping Cart Data - Only Cola and Chips
+// Shopping Cart Data
 const cart = ref([
   { id: 1, name: "Cola", price: 3, quantity: 10 },
   { id: 2, name: "Chips", price: 6, quantity: 8 }
 ])
 
-// Delete Product Function
+// Delete Item Function
 const deleteItem = (id) => {
   cart.value = cart.value.filter(item => item.id !== id)
 }
 
-// compute() function - as required in homework
+// compute() function - Required for homework
 const compute = () => {
   let total = 0
-  
-  // Using forEach() 
   cart.value.forEach(item => {
     total += item.price * item.quantity
   })
-  
   return total
 }
 
-// Auto-updating total
+// Auto update total
 const totalAmount = computed(() => compute())
 </script>
 
 <template>
-  <div class="app">
-    <h1>🛒 Shopping Cart</h1>
-    
-    <div class="cart">
+  <div class="container">
+    <div class="header">
+      <h1>🛒 My Shopping Cart</h1>
+      <p class="subtitle">Total Calculation Practice</p>
+    </div>
+
+    <div class="cart-card">
       <div class="cart-header">
         <span>Product</span>
-        <span>Price (¥)</span>
+        <span>Price</span>
         <span>Quantity</span>
-        <span>Subtotal (¥)</span>
+        <span>Subtotal</span>
         <span>Action</span>
       </div>
 
       <div v-for="item in cart" :key="item.id" class="cart-item">
-        <span>{{ item.name }}</span>
-        <span>{{ item.price }}</span>
-        <span>{{ item.quantity }}</span>
-        <span>{{ item.price * item.quantity }}</span>
-        <button @click="deleteItem(item.id)" class="delete-btn">Delete</button>
+        <div class="product-name">
+          <span class="emoji">{{ item.name === 'Cola' ? '🥤' : '🍟' }}</span>
+          {{ item.name }}
+        </div>
+        <span class="price">¥{{ item.price }}</span>
+        <span class="quantity">{{ item.quantity }}</span>
+        <span class="subtotal">¥{{ item.price * item.quantity }}</span>
+        <button @click="deleteItem(item.id)" class="delete-btn">
+          🗑️ Delete
+        </button>
       </div>
     </div>
 
-    <div class="total">
-      <h2>Total Amount: <strong>¥{{ totalAmount }}</strong></h2>
+    <div class="total-section">
+      <h2>Total Amount: <span class="total-amount">¥{{ totalAmount }}</span></h2>
+      <p class="note">The total updates automatically when you delete a product</p>
     </div>
-
-    <p class="note">Total updates automatically after deleting any product</p>
   </div>
 </template>
-
