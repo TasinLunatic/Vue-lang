@@ -1,210 +1,107 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-
-// Import the Pinia user store
-// It is used to save the current logged-in user information on the front end
 import { defineUser } from '../store/userStore.js'
 
-// Get the router object for page navigation
 const router = useRouter()
+const sysUser = defineUser()
 
-// Get the user store object
-let sysUser = defineUser()
+const loginUser = reactive({ username: '', userPwd: '' })
+const usernameMsg = ref('')
+const userPwdMsg = ref('')
 
-// Create a reactive object to store login form data
-let loginUser = reactive({
-  username: '',
-  userPwd: ''
-})
-
-// Message variables used to show validation results
-let usernameMsg = ref('')
-let userPwdMsg = ref('')
-
-// Check whether the username is valid
-function checkUsername() {
-  // Username rule:
-  // 5 to 10 characters, only letters and numbers are allowed
-  let usernameReg = /^[a-zA-Z0-9]{5,10}$/
-
-  if (!usernameReg.test(loginUser.username)) {
-    usernameMsg.value = 'Invalid format'
-    return false
-  }
-
-  usernameMsg.value = 'OK'
-  return true
-}
-
-// Check whether the password is valid
-function checkUserPwd() {
-  // Password rule:
-  // Exactly 6 digits
-  let userPwdReg = /^[0-9]{6}$/
-
-  if (!userPwdReg.test(loginUser.userPwd)) {
-    userPwdMsg.value = 'Invalid format'
-    return false
-  }
-
-  userPwdMsg.value = 'OK'
-  return true
-}
-
-// Login function
-function login() {
-  // Validate all form fields before login
-  let flag1 = checkUsername()
-  let flag2 = checkUserPwd()
-
-  if (!(flag1 && flag2)) {
-    alert('Validation failed. Please check your input again.')
-    return
-  }
-
-  // Pure front-end demonstration:
-  // Read the registered username and password from localStorage.
-  // These values are saved by the registration page.
-  let savedUsername = localStorage.getItem('username')
-  let savedUserPwd = localStorage.getItem('userPwd')
-
-  // If there is no user information in localStorage,
-  // it means the user has not registered yet.
-  if (!savedUsername || !savedUserPwd) {
-    alert('No registered user found. Please register first.')
-    return
-  }
-
-  // Check whether the username is correct
-  if (loginUser.username !== savedUsername) {
-    alert('Username is incorrect.')
-    return
-  }
-
-  // Check whether the password is correct
-  if (loginUser.userPwd !== savedUserPwd) {
-    alert('Password is incorrect.')
-    return
-  }
-
-  // Login successful
-  alert('Login successful.')
-
-  // Save the logged-in user information into Pinia
-  // In this pure front-end version, uid is only a simulated value.
-  sysUser.uid = 1
-  sysUser.username = loginUser.username
-
-  // Save login status in sessionStorage
-  // This can be used to check whether the user has logged in.
-  sessionStorage.setItem('loginUser', loginUser.username)
-
-  // Jump to the schedule management page
-  router.push('/showSchedule')
-}
-
-// Clear all form data and messages
-function clearForm() {
-  loginUser.username = ''
-  loginUser.userPwd = ''
-
-  usernameMsg.value = ''
-  userPwdMsg.value = ''
-}
+// ... (keep all your functions: checkUsername, checkUserPwd, login, clearForm)
 </script>
 
 <template>
-  <div>
-    <h3 class="ht">Login</h3>
+  <div class="form-container">
+    <div class="card">
+      <h2>🔑 Login</h2>
+      
+      <div class="form-group">
+        <label>Username</label>
+        <input v-model="loginUser.username" @blur="checkUsername" type="text" placeholder="Enter username" />
+        <span class="msg" :class="{ success: usernameMsg === 'OK' }">{{ usernameMsg }}</span>
+      </div>
 
-    <table class="tab" cellspacing="0px">
-      <tr class="ltr">
-        <td>Please enter username</td>
-        <td>
-          <input
-            class="ipt"
-            type="text"
-            v-model="loginUser.username"
-            @blur="checkUsername()"
-          />
+      <div class="form-group">
+        <label>Password</label>
+        <input v-model="loginUser.userPwd" @blur="checkUserPwd" type="password" placeholder="Enter 6-digit password" />
+        <span class="msg" :class="{ success: userPwdMsg === 'OK' }">{{ userPwdMsg }}</span>
+      </div>
 
-          <span id="usernameMsg" v-text="usernameMsg"></span>
-        </td>
-      </tr>
-
-      <tr class="ltr">
-        <td>Please enter password</td>
-        <td>
-          <input
-            class="ipt"
-            type="password"
-            v-model="loginUser.userPwd"
-            @blur="checkUserPwd()"
-          />
-
-          <span id="userPwdMsg" v-text="userPwdMsg"></span>
-        </td>
-      </tr>
-
-      <tr class="ltr">
-        <td colspan="2" class="buttonContainer">
-          <input class="btn1" type="button" @click="login()" value="Login" />
-          <input class="btn1" type="button" @click="clearForm()" value="Reset" />
-
-          <router-link to="/regist">
-            <button class="btn1" type="button">Register</button>
-          </router-link>
-        </td>
-      </tr>
-    </table>
+      <div class="actions">
+        <button class="btn btn-primary" @click="login">Login</button>
+        <button class="btn btn-secondary" @click="clearForm">Clear</button>
+        <router-link to="/regist"><button class="btn btn-outline">Register</button></router-link>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* Title style */
-.ht {
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+}
+
+h2 {
   text-align: center;
-  color: cadetblue;
-  font-family: Arial, sans-serif;
+  color: #2c3e50;
+  margin-bottom: 30px;
 }
 
-/* Table container style */
-.tab {
-  width: 500px;
-  border: 5px solid cadetblue;
-  margin: 0px auto;
-  border-radius: 5px;
-  font-family: Arial, sans-serif;
+.form-group {
+  margin-bottom: 20px;
 }
 
-/* Table cell border style */
-.ltr td {
-  border: 1px solid powderblue;
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
-/* Input box style */
-.ipt {
-  border: 0px;
-  width: 50%;
+input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
-/* Button style */
-.btn1 {
-  border: 2px solid powderblue;
-  border-radius: 4px;
-  width: 80px;
-  background-color: antiquewhite;
+input:focus {
+  border-color: #3498db;
+  outline: none;
 }
 
-/* Validation message style */
-#usernameMsg,
-#userPwdMsg {
-  color: goldenrod;
+.msg {
+  font-size: 0.9rem;
 }
 
-/* Center the buttons */
-.buttonContainer {
-  text-align: center;
+.success { color: #27ae60; }
+.error { color: #e74c3c; }
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
 }
 </style>

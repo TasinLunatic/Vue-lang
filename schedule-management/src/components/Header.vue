@@ -1,131 +1,115 @@
 <script setup>
-/*
-  Import Pinia stores.
-
-  defineUser is used to store the current logged-in user.
-  defindSchedule is used to store the schedule list.
-*/
 import { defineUser } from '../store/userStore.js'
 import { defindSchedule } from '../store/scheduleStore.js'
-
 import { useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 
-// Get Pinia store objects
-let sysUser = defineUser()
-let schedule = defindSchedule()
+const sysUser = defineUser()
+const schedule = defindSchedule()
+const router = useRouter()
 
-// Get the router object for page navigation
-let router = useRouter()
-
-/*
-  When the component is mounted, try to restore the login status.
-
-  In a pure front-end project, Pinia data may be lost after refreshing the page.
-  So we read the username from sessionStorage and put it back into Pinia.
-*/
 onMounted(() => {
-  let loginUser = sessionStorage.getItem('loginUser')
-
+  const loginUser = sessionStorage.getItem('loginUser')
   if (loginUser) {
     sysUser.username = loginUser
     sysUser.uid = 1
   }
 })
 
-/*
-  Logout function.
-
-  In the pure front-end version, logout means:
-  1. Clear user information in Pinia.
-  2. Clear schedule information in Pinia.
-  3. Remove login status from sessionStorage.
-  4. Jump back to the login page.
-*/
 function logout() {
-  // Clear all Pinia user data
   sysUser.$reset()
-
-  // Clear all Pinia schedule data
   schedule.$reset()
-
-  // Clear login status saved in sessionStorage
   sessionStorage.removeItem('loginUser')
-
-  // Jump to the login page
   router.push('/login')
 }
 </script>
 
 <template>
-  <div>
-    <h1 class="ht">Welcome to Schedule Management System</h1>
+  <header class="header">
+    <div class="container">
+      <h1 class="title">📅 Schedule Manager</h1>
+      
+      <div class="nav">
+        <div v-if="sysUser.username === ''" class="auth-buttons">
+          <router-link to="/login">
+            <button class="btn btn-primary">Login</button>
+          </router-link>
+          <router-link to="/regist">
+            <button class="btn btn-secondary">Register</button>
+          </router-link>
+        </div>
 
-    <div>
-      <!--
-        If the username is empty, it means the user has not logged in.
-        Show Login and Register buttons.
-      -->
-      <div class="optionDiv" v-if="sysUser.username === ''">
-        <router-link to="/login">
-          <button class="b1s" type="button">Login</button>
-        </router-link>
-
-        <router-link to="/regist">
-          <button class="b1s" type="button">Register</button>
-        </router-link>
+        <div v-else class="user-info">
+          <span class="welcome">Welcome, <strong>{{ sysUser.username }}</strong></span>
+          <router-link to="/showSchedule">
+            <button class="btn btn-primary">My Schedule</button>
+          </router-link>
+          <button class="btn btn-danger" @click="logout">Logout</button>
+        </div>
       </div>
-
-      <!--
-        If the username is not empty, it means the user has logged in.
-        Show welcome message, logout button, and schedule button.
-      -->
-      <div class="optionDiv" v-else>
-        Welcome {{ sysUser.username }}
-
-        <button class="b1b" type="button" @click="logout()">
-          Logout
-        </button>
-
-        <router-link to="/showSchedule">
-          <button class="b1b" type="button">
-            My Schedule
-          </button>
-        </router-link>
-      </div>
-
-      <br />
     </div>
-  </div>
+  </header>
 </template>
 
 <style scoped>
-/* Title style */
-.ht {
-  text-align: center;
-  color: cadetblue;
-  font-family: Arial, sans-serif;
+.header {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Small button style */
-.b1s {
-  border: 2px solid powderblue;
-  border-radius: 4px;
-  width: 80px;
-  background-color: antiquewhite;
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
 }
 
-/* Big button style */
-.b1b {
-  border: 2px solid powderblue;
-  border-radius: 4px;
-  width: 120px;
-  background-color: antiquewhite;
+.title {
+  margin: 0;
+  font-size: 1.8rem;
 }
 
-/* Option area style */
-.optionDiv {
-  width: 450px;
-  float: right;
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #2ecc71;
+  color: white;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.welcome {
+  margin-right: 15px;
+  font-size: 1.1rem;
 }
 </style>
