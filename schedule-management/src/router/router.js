@@ -5,7 +5,7 @@ import Login from '../components/Login.vue'
 import Regist from '../components/Regist.vue'
 import ShowSchedule from '../components/ShowSchedule.vue'
 
-// Import Pinia
+// Import Pinia instance and user store
 import pinia from '../pinia.js'
 import { defineUser } from '../store/userStore.js'
 
@@ -36,21 +36,21 @@ const router = createRouter({
 // Global Navigation Guard
 router.beforeEach((to, from, next) => {
   if (to.path === '/showSchedule') {
-    const loginUser = sessionStorage.getItem('loginUser')
+    const loginUserFromStorage = sessionStorage.getItem('loginUser')
 
-    if (loginUser) {
-      // Restore user info to Pinia if missing
+    if (loginUserFromStorage) {
+      // Restore user data into Pinia if it's missing
       if (!sysUser.username) {
-        sysUser.username = loginUser
+        sysUser.username = loginUserFromStorage
         sysUser.uid = 1
       }
-      next()        // Allow access
+      next()   // ✅ Allow access to My Schedule
     } else {
       alert('Please log in first.')
-      next('/login') // Redirect to login
+      next('/login')   // Redirect to login page
     }
   } else {
-    next() // Allow access to login & register
+    next()   // Login and Register pages are always accessible
   }
 })
 
