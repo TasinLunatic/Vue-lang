@@ -2,7 +2,7 @@
 import { defineUser } from '../store/userStore.js'
 import { defineSchedule } from '../store/scheduleStore.js'
 import { useRouter } from 'vue-router'
-import { onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 
 const sysUser = defineUser()
 const schedule = defineSchedule()
@@ -17,12 +17,24 @@ onMounted(() => {
   }
 })
 
-// Watch for changes in username (important for reactivity)
-watch(() => sysUser.username, (newVal) => {
-  if (newVal) {
-    console.log('User logged in:', newVal)
+function logout() {
+  if (confirm('Are you sure you want to logout?')) {
+    // 1. Clear Pinia user store
+    sysUser.$reset()
+
+    // 2. Clear Pinia schedule store
+    schedule.$reset()
+
+    // 3. Remove login info from sessionStorage
+    sessionStorage.removeItem('loginUser')
+
+    // 4. Redirect to login page
+    router.push('/login')
+
+    alert('You have been logged out successfully.')
   }
-})
+}
+
 </script>
 
 <template>
@@ -49,7 +61,9 @@ watch(() => sysUser.username, (newVal) => {
             <button class="btn btn-primary">My Schedule</button>
           </router-link>
           
-          <button class="btn btn-danger" @click="logout">Logout</button>
+          <button class="btn btn-danger" @click="logout">
+  Logout
+</button>
         </div>
       </div>
     </div>
@@ -76,6 +90,12 @@ watch(() => sysUser.username, (newVal) => {
 
 .title { margin: 0; font-size: 1.8rem; }
 
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .btn {
   padding: 10px 20px;
   border: none;
@@ -83,11 +103,24 @@ watch(() => sysUser.username, (newVal) => {
   cursor: pointer;
   font-weight: 500;
   margin-left: 10px;
+  transition: all 0.3s;
 }
 
 .btn-primary { background: #3498db; color: white; }
+.btn-primary:hover {
+  background: #2980b9;
+}
+
 .btn-secondary { background: #2ecc71; color: white; }
+.btn-secondary:hover {
+  background: #27ae60;
+}
+
 .btn-danger { background: #e74c3c; color: white; }
+.btn-danger:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
 
 .welcome { margin-right: 15px; font-size: 1.1rem; }
 </style>
