@@ -1,22 +1,24 @@
-/* 
-专门用于存储日程状态信息的pinia
+import { defineStore } from 'pinia'
 
-*/
-import {defineStore} from 'pinia'
+export const defineSchedule = defineStore('scheduleList', {
+  state: () => ({
+    itemList: []
+  }),
 
-export const defindSchedule= defineStore(
-    "scheduleList",
-    {
-        state:()=>{
-            return {
-              itemList:[]
-            }
-        },
-        getters:{
+  actions: {
+    // Add new schedule item
+    addItem(newItem) {
+      this.itemList.push(newItem)
+    },
 
-        },
-        actions:{
+    // Remove schedule item
+    removeItem(index) {
+      this.itemList.splice(index, 1)
+    },
 
-        }
+    // Clear all schedules
+    clearAll() {
+      this.itemList = []
     }
-)
+  }
+})

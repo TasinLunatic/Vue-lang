@@ -1,10 +1,10 @@
 <script setup>
 import { defineUser } from '../store/userStore.js'
-import { defindSchedule } from '../store/scheduleStore.js'
+import { defineSchedule } from '../store/scheduleStore.js'
 import { onMounted } from 'vue'
 
 const sysUser = defineUser()
-const schedule = defindSchedule()
+const schedule = defineSchedule()
 
 function getCurrentUsername() {
   return sysUser.username || sessionStorage.getItem('loginUser') || 'guest'

@@ -1,11 +1,11 @@
 <script setup>
 import { defineUser } from '../store/userStore.js'
-import { defindSchedule } from '../store/scheduleStore.js'
+import { defineSchedule } from '../store/scheduleStore.js'
 import { useRouter } from 'vue-router'
 import { onMounted, watch } from 'vue'
 
 const sysUser = defineUser()
-const schedule = defindSchedule()
+const schedule = defineSchedule()
 const router = useRouter()
 
 // Restore login status when component mounts
