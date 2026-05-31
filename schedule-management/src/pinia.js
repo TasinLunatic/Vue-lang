@@ -1,4 +1,4 @@
-// 开启pinia
+// pinia.js
 import {createPinia} from 'pinia'
 let pinia = createPinia()
 
