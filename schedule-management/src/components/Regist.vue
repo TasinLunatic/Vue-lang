@@ -1,94 +1,82 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
-// Reactive form data
 const registUser = reactive({
-  username: '',
-  userPwd: ''
-})
+  username: "",
+  userPwd: "",
+});
 
-const reUserPwd = ref('')
+const reUserPwd = ref("");
 
-// Validation messages
-const usernameMsg = ref('')
-const userPwdMsg = ref('')
-const reUserPwdMsg = ref('')
+const usernameMsg = ref("");
+const userPwdMsg = ref("");
+const reUserPwdMsg = ref("");
 
-// Check Username
 function checkUsername() {
-  const usernameReg = /^[a-zA-Z0-9]{5,10}$/
+  const usernameReg = /^[a-zA-Z0-9]{5,10}$/;
   if (!usernameReg.test(registUser.username)) {
-    usernameMsg.value = 'Invalid format (5-10 letters/numbers)'
-    return false
+    usernameMsg.value = "Invalid format (5-10 letters/numbers)";
+    return false;
   }
-  usernameMsg.value = 'Available'
-  return true
+  usernameMsg.value = "Available";
+  return true;
 }
 
-// Check Password
 function checkUserPwd() {
-  const userPwdReg = /^[0-9]{6}$/
+  const userPwdReg = /^[0-9]{6}$/;
   if (!userPwdReg.test(registUser.userPwd)) {
-    userPwdMsg.value = 'Invalid format (must be 6 digits)'
-    return false
+    userPwdMsg.value = "Invalid format (must be 6 digits)";
+    return false;
   }
-  userPwdMsg.value = 'OK'
-  return true
+  userPwdMsg.value = "OK";
+  return true;
 }
 
-// Check Confirm Password
 function checkReUserPwd() {
-  const userPwdReg = /^[0-9]{6}$/
-  
+  const userPwdReg = /^[0-9]{6}$/;
+
   if (!userPwdReg.test(reUserPwd.value)) {
-    reUserPwdMsg.value = 'Invalid format (must be 6 digits)'
-    return false
+    reUserPwdMsg.value = "Invalid format (must be 6 digits)";
+    return false;
   }
 
   if (registUser.userPwd !== reUserPwd.value) {
-    reUserPwdMsg.value = 'Passwords do not match'
-    return false
+    reUserPwdMsg.value = "Passwords do not match";
+    return false;
   }
 
-  reUserPwdMsg.value = 'OK'
-  return true
+  reUserPwdMsg.value = "OK";
+  return true;
 }
 
-// Register Function
 function regist() {
-  const flag1 = checkUsername()
-  const flag2 = checkUserPwd()
-  const flag3 = checkReUserPwd()
+  const flag1 = checkUsername();
+  const flag2 = checkUserPwd();
+  const flag3 = checkReUserPwd();
 
   if (flag1 && flag2 && flag3) {
-    // Save to localStorage (for pure frontend demo)
-    localStorage.setItem('username', registUser.username)
-    localStorage.setItem('userPwd', registUser.userPwd)
+    localStorage.setItem("username", registUser.username);
+    localStorage.setItem("userPwd", registUser.userPwd);
 
-    alert('Registration successful! Please login now.')
-
-    // Clear form
-    clearForm()
-
-    // Redirect to login page
-    router.push('/login')
+    alert("Registration successful! Please login now.");
+    clearForm();
+    router.push("/login");
   } else {
-    alert('Please correct the errors before registering.')
+    alert("Please correct the errors before registering.");
   }
 }
 
-// Clear Form
 function clearForm() {
-  registUser.username = ''
-  registUser.userPwd = ''
-  reUserPwd.value = ''
+  registUser.username = "";
+  registUser.userPwd = "";
+  reUserPwd.value = "";
 
-  usernameMsg.value = ''
-  userPwdMsg.value = ''
-  reUserPwdMsg.value = ''
+  usernameMsg.value = "";
+  userPwdMsg.value = "";
+  reUserPwdMsg.value = "";
 }
 </script>
 
@@ -106,7 +94,13 @@ function clearForm() {
           @blur="checkUsername"
           placeholder="Enter username (5-10 characters)"
         />
-        <span class="msg" :class="{ success: usernameMsg === 'Available', error: usernameMsg && usernameMsg !== 'Available' }">
+        <span
+          class="msg"
+          :class="{
+            success: usernameMsg === 'Available',
+            error: usernameMsg && usernameMsg !== 'Available',
+          }"
+        >
           {{ usernameMsg }}
         </span>
       </div>
@@ -119,7 +113,13 @@ function clearForm() {
           @blur="checkUserPwd"
           placeholder="Enter 6-digit password"
         />
-        <span class="msg" :class="{ success: userPwdMsg === 'OK', error: userPwdMsg && userPwdMsg !== 'OK' }">
+        <span
+          class="msg"
+          :class="{
+            success: userPwdMsg === 'OK',
+            error: userPwdMsg && userPwdMsg !== 'OK',
+          }"
+        >
           {{ userPwdMsg }}
         </span>
       </div>
@@ -132,7 +132,13 @@ function clearForm() {
           @blur="checkReUserPwd"
           placeholder="Re-enter your password"
         />
-        <span class="msg" :class="{ success: reUserPwdMsg === 'OK', error: reUserPwdMsg && reUserPwdMsg !== 'OK' }">
+        <span
+          class="msg"
+          :class="{
+            success: reUserPwdMsg === 'OK',
+            error: reUserPwdMsg && reUserPwdMsg !== 'OK',
+          }"
+        >
           {{ reUserPwdMsg }}
         </span>
       </div>
@@ -143,7 +149,7 @@ function clearForm() {
       </div>
 
       <div class="login-link">
-        Already have an account? 
+        Already have an account?
         <router-link to="/login">Login here</router-link>
       </div>
     </div>
@@ -212,8 +218,12 @@ input:focus {
   display: block;
 }
 
-.success { color: #27ae60; }
-.error { color: #e74c3c; }
+.success {
+  color: #27ae60;
+}
+.error {
+  color: #e74c3c;
+}
 
 .actions {
   display: flex;

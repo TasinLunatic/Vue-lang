@@ -1,47 +1,38 @@
 <script setup>
-import { defineUser } from '../store/userStore.js'
-import { defineSchedule } from '../store/scheduleStore.js'
-import { useRouter } from 'vue-router'
-import { onMounted } from 'vue'
+import { defineUser } from "../store/userStore.js";
+import { defineSchedule } from "../store/scheduleStore.js";
+import { useRouter } from "vue-router";
+import { onMounted } from "vue";
 
-const sysUser = defineUser()
-const schedule = defineSchedule()
-const router = useRouter()
+const sysUser = defineUser();
+const schedule = defineSchedule();
+const router = useRouter();
 
-// Restore login status when component mounts
 onMounted(() => {
-  const loginUser = sessionStorage.getItem('loginUser')
+  const loginUser = sessionStorage.getItem("loginUser");
   if (loginUser) {
-    sysUser.username = loginUser
-    sysUser.uid = 1
+    sysUser.username = loginUser;
+    sysUser.uid = 1;
   }
-})
+});
 
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
-    // 1. Clear Pinia user store
-    sysUser.$reset()
+  if (confirm("Are you sure you want to logout?")) {
+    sysUser.$reset();
+    schedule.$reset();
+    sessionStorage.removeItem("loginUser");
+    router.push("/login");
 
-    // 2. Clear Pinia schedule store
-    schedule.$reset()
-
-    // 3. Remove login info from sessionStorage
-    sessionStorage.removeItem('loginUser')
-
-    // 4. Redirect to login page
-    router.push('/login')
-
-    alert('You have been logged out successfully.')
+    alert("You have been logged out successfully.");
   }
 }
-
 </script>
 
 <template>
   <header class="header">
     <div class="container">
       <h1 class="title">📅 Schedule Manager</h1>
-      
+
       <div class="nav">
         <!-- Show Login/Register when NOT logged in -->
         <div v-if="!sysUser.username" class="auth-buttons">
@@ -55,15 +46,15 @@ function logout() {
 
         <!-- Show Welcome + Buttons when logged in -->
         <div v-else class="user-info">
-          <span class="welcome">Welcome, <strong>{{ sysUser.username }}</strong></span>
-          
+          <span class="welcome"
+            >Welcome, <strong>{{ sysUser.username }}</strong></span
+          >
+
           <router-link to="/showSchedule">
             <button class="btn btn-primary">My Schedule</button>
           </router-link>
-          
-          <button class="btn btn-danger" @click="logout">
-  Logout
-</button>
+
+          <button class="btn btn-danger" @click="logout">Logout</button>
         </div>
       </div>
     </div>
@@ -71,12 +62,11 @@ function logout() {
 </template>
 
 <style scoped>
-/* Same modern styles as before */
 .header {
   background: linear-gradient(135deg, #2c3e50, #3498db);
   color: white;
   padding: 1rem 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .container {
@@ -88,7 +78,10 @@ function logout() {
   padding: 0 20px;
 }
 
-.title { margin: 0; font-size: 1.8rem; }
+.title {
+  margin: 0;
+  font-size: 1.8rem;
+}
 
 .nav {
   display: flex;
@@ -106,21 +99,33 @@ function logout() {
   transition: all 0.3s;
 }
 
-.btn-primary { background: #3498db; color: white; }
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
 .btn-primary:hover {
   background: #2980b9;
 }
 
-.btn-secondary { background: #2ecc71; color: white; }
+.btn-secondary {
+  background: #2ecc71;
+  color: white;
+}
 .btn-secondary:hover {
   background: #27ae60;
 }
 
-.btn-danger { background: #e74c3c; color: white; }
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
 .btn-danger:hover {
   background: #c0392b;
   transform: translateY(-2px);
 }
 
-.welcome { margin-right: 15px; font-size: 1.1rem; }
+.welcome {
+  margin-right: 15px;
+  font-size: 1.1rem;
+}
 </style>
