@@ -1,258 +1,256 @@
 <script setup>
-/*
-  Import Pinia stores.
-  defineUser is used to get the current logged-in user.
-  defindSchedule is used to store the schedule list.
-*/
 import { defineUser } from '../store/userStore.js'
 import { defindSchedule } from '../store/scheduleStore.js'
-
 import { onMounted } from 'vue'
 
-// Get Pinia store objects
-let sysUser = defineUser()
-let schedule = defindSchedule()
+const sysUser = defineUser()
+const schedule = defindSchedule()
 
-/*
-  Get the current username.
-
-  In the previous Login page, we saved the login status into sessionStorage.
-  If the page is refreshed, Pinia data may be lost,
-  so we can also read the username from sessionStorage.
-*/
 function getCurrentUsername() {
   return sysUser.username || sessionStorage.getItem('loginUser') || 'guest'
 }
 
-/*
-  Generate a localStorage key for the current user.
-
-  Different users should have different schedule lists.
-  For example:
-  scheduleList_tom
-  scheduleList_jack
-*/
 function getStorageKey() {
   return 'scheduleList_' + getCurrentUsername()
 }
 
-/*
-  Load schedule data from localStorage.
-
-  This function is called when the component is mounted.
-*/
 function loadSchedule() {
-  let storageKey = getStorageKey()
-  let savedList = localStorage.getItem(storageKey)
+  const storageKey = getStorageKey()
+  const savedList = localStorage.getItem(storageKey)
 
   if (savedList) {
-    // If there is saved schedule data, convert JSON string to array
     schedule.itemList = JSON.parse(savedList)
   } else {
-    // If there is no saved data, create some default schedule items
     schedule.itemList = [
-      {
-        sid: 1,
-        title: 'Learn Vue Router',
-        completed: '0'
-      },
-      {
-        sid: 2,
-        title: 'Practice schedule management',
-        completed: '1'
-      }
+      { sid: 1, title: 'Learn Vue Router', completed: '0' },
+      { sid: 2, title: 'Practice schedule management', completed: '1' }
     ]
-
-    // Save the default data into localStorage
     saveSchedule()
   }
 }
 
-/*
-  Save schedule data to localStorage.
-
-  localStorage can only store strings,
-  so we need to convert the schedule list to a JSON string.
-*/
 function saveSchedule() {
-  let storageKey = getStorageKey()
+  const storageKey = getStorageKey()
   localStorage.setItem(storageKey, JSON.stringify(schedule.itemList))
 }
 
-/*
-  When the component is mounted,
-  load all schedules of the current user.
-*/
 onMounted(() => {
   loadSchedule()
 })
 
-/*
-  Add a new empty schedule item.
-
-  In the original back-end version, this operation should send a request
-  to the server and insert a new record into the database.
-
-  In this pure front-end version, we only add the new item to Pinia
-  and then save it to localStorage.
-*/
 function addItem() {
-  let newItem = {
+  const newItem = {
     sid: Date.now(),
     title: '',
     completed: '0'
   }
-
   schedule.itemList.push(newItem)
   saveSchedule()
-
-  alert('Schedule added successfully.')
 }
 
-/*
-  Save the modified schedule item.
-
-  In the pure front-end version, the data has already been changed
-  by v-model. So we only need to save the whole list to localStorage.
-*/
 function updateItem(index) {
-  let item = schedule.itemList[index]
-
+  const item = schedule.itemList[index]
   if (!item.title.trim()) {
-    alert('Schedule content cannot be empty.')
+    alert('Schedule content cannot be empty!')
     return
   }
-
   saveSchedule()
-  alert('Schedule updated successfully.')
+  alert('Schedule updated successfully!')
 }
 
-/*
-  Remove a schedule item.
-
-  In the original back-end version, this operation should send sid
-  to the server and delete the record from the database.
-
-  In this pure front-end version, we delete it from the array directly.
-*/
 function removeItem(index) {
-  let result = confirm('Are you sure you want to delete this schedule?')
-
-  if (!result) {
-    return
+  if (confirm('Are you sure you want to delete this schedule?')) {
+    schedule.itemList.splice(index, 1)
+    saveSchedule()
   }
+}
 
-  schedule.itemList.splice(index, 1)
+function toggleStatus(index) {
   saveSchedule()
-
-  alert('Schedule deleted successfully.')
 }
 </script>
 
 <template>
-  <div>
-    <h3 class="ht">Your Schedule List</h3>
+  <div class="schedule-container">
+    <div class="schedule-header">
+      <h2>📅 My Schedule</h2>
+      <p>Welcome back, <strong>{{ sysUser.username || 'User' }}</strong></p>
+      <button class="btn-add" @click="addItem">
+        + Add New Schedule
+      </button>
+    </div>
 
-    <table class="tab" cellspacing="0px">
-      <tr class="ltr">
-        <th>No.</th>
-        <th>Content</th>
-        <th>Status</th>
-        <th>Operation</th>
-      </tr>
-
-      <tr
-        class="ltr"
-        v-for="(item, index) in schedule.itemList"
-        :key="item.sid"
-      >
-        <td v-text="index + 1"></td>
-
-        <td>
+    <div class="schedule-list">
+      <div v-for="(item, index) in schedule.itemList" :key="item.sid" class="schedule-card">
+        <div class="card-content">
           <input
-            class="ipt"
-            type="text"
             v-model="item.title"
-            placeholder="Please enter schedule content"
+            type="text"
+            class="task-input"
+            placeholder="What do you need to do?"
           />
-        </td>
 
-        <td>
-          <input
-            type="radio"
-            value="1"
-            v-model="item.completed"
-          />
-          Completed
+          <div class="status-group">
+            <label class="status-label">
+              <input
+                type="radio"
+                :value="'0'"
+                v-model="item.completed"
+                @change="toggleStatus(index)"
+              />
+              <span class="status-text pending">Pending</span>
+            </label>
+            <label class="status-label">
+              <input
+                type="radio"
+                :value="'1'"
+                v-model="item.completed"
+                @change="toggleStatus(index)"
+              />
+              <span class="status-text completed">Completed</span>
+            </label>
+          </div>
+        </div>
 
-          <input
-            type="radio"
-            value="0"
-            v-model="item.completed"
-          />
-          Not completed
-        </td>
+        <div class="card-actions">
+          <button class="btn-save" @click="updateItem(index)">Save</button>
+          <button class="btn-delete" @click="removeItem(index)">Delete</button>
+        </div>
+      </div>
+    </div>
 
-        <td class="buttonContainer">
-          <button class="btn1" @click="removeItem(index)">
-            Delete
-          </button>
-
-          <button class="btn1" @click="updateItem(index)">
-            Save
-          </button>
-        </td>
-      </tr>
-
-      <tr class="ltr buttonContainer">
-        <td colspan="4">
-          <button class="btn1" @click="addItem()">
-            Add Schedule
-          </button>
-        </td>
-      </tr>
-    </table>
+    <div v-if="schedule.itemList.length === 0" class="empty-state">
+      <p>No schedules yet. Click "Add New Schedule" to get started!</p>
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* Title style */
-.ht {
+.schedule-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.schedule-header {
   text-align: center;
-  color: cadetblue;
-  font-family: Arial, sans-serif;
+  margin-bottom: 30px;
 }
 
-/* Table container style */
-.tab {
-  width: 80%;
-  border: 5px solid cadetblue;
-  margin: 0px auto;
-  border-radius: 5px;
-  font-family: Arial, sans-serif;
+.schedule-header h2 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 8px;
 }
 
-/* Table cell style */
-.ltr td {
-  border: 1px solid powderblue;
+.schedule-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
 }
 
-/* Input box style */
-.ipt {
-  border: 0px;
-  width: 80%;
+.btn-add {
+  margin-top: 15px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-/* Button style */
-.btn1 {
-  border: 2px solid powderblue;
-  border-radius: 4px;
-  width: 120px;
-  background-color: antiquewhite;
+.btn-add:hover {
+  background: #219653;
+  transform: scale(1.05);
 }
 
-/* Center the buttons */
-.buttonContainer {
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.schedule-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s;
+}
+
+.schedule-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.task-input {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #dfe4ea;
+  border-radius: 10px;
+  font-size: 1.05rem;
+}
+
+.task-input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.status-group {
+  display: flex;
+  gap: 25px;
+}
+
+.status-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.status-text {
+  font-weight: 500;
+}
+
+.pending { color: #f39c12; }
+.completed { color: #27ae60; }
+
+.card-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn-save {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.empty-state {
   text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+  font-size: 1.1rem;
 }
 </style>

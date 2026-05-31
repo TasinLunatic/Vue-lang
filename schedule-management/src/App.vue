@@ -1,13 +1,13 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import Header from './components/Header.vue'   // ← Your Header
+import Header from './components/Header.vue'
 </script>
 
 <template>
   <div class="app">
     <Header />
     <main class="main-content">
-      <RouterView />   <!-- This will show Login, Regist, ShowSchedule, etc. -->
+      <RouterView />
     </main>
   </div>
 </template>
@@ -20,7 +20,7 @@ import Header from './components/Header.vue'   // ← Your Header
 
 .main-content {
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 </style>

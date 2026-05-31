@@ -2,65 +2,52 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
-// Get the router object for page navigation
 const router = useRouter()
 
-// Create a reactive object to store registration form data
-let registUser = reactive({
+// Reactive form data
+const registUser = reactive({
   username: '',
   userPwd: ''
 })
 
-// Message variables used to show validation results
-let usernameMsg = ref('')
-let userPwdMsg = ref('')
-let reUserPwdMsg = ref('')
+const reUserPwd = ref('')
 
-// Store the repeated password
-let reUserPwd = ref('')
+// Validation messages
+const usernameMsg = ref('')
+const userPwdMsg = ref('')
+const reUserPwdMsg = ref('')
 
-// Check whether the username is valid
+// Check Username
 function checkUsername() {
-  // Username rule:
-  // 5 to 10 characters, only letters and numbers are allowed
-  let usernameReg = /^[a-zA-Z0-9]{5,10}$/
-
+  const usernameReg = /^[a-zA-Z0-9]{5,10}$/
   if (!usernameReg.test(registUser.username)) {
-    usernameMsg.value = 'Invalid format'
+    usernameMsg.value = 'Invalid format (5-10 letters/numbers)'
     return false
   }
-
-  // In this pure front-end version, there is no database.
-  // So we do not check whether the username already exists.
   usernameMsg.value = 'Available'
   return true
 }
 
-// Check whether the password is valid
+// Check Password
 function checkUserPwd() {
-  // Password rule:
-  // Exactly 6 digits
-  let userPwdReg = /^[0-9]{6}$/
-
+  const userPwdReg = /^[0-9]{6}$/
   if (!userPwdReg.test(registUser.userPwd)) {
-    userPwdMsg.value = 'Invalid format'
+    userPwdMsg.value = 'Invalid format (must be 6 digits)'
     return false
   }
-
   userPwdMsg.value = 'OK'
   return true
 }
 
-// Check whether the repeated password is valid
+// Check Confirm Password
 function checkReUserPwd() {
-  let userPwdReg = /^[0-9]{6}$/
-
+  const userPwdReg = /^[0-9]{6}$/
+  
   if (!userPwdReg.test(reUserPwd.value)) {
-    reUserPwdMsg.value = 'Invalid format'
+    reUserPwdMsg.value = 'Invalid format (must be 6 digits)'
     return false
   }
 
-  // Check whether the two passwords are the same
   if (registUser.userPwd !== reUserPwd.value) {
     reUserPwdMsg.value = 'Passwords do not match'
     return false
@@ -70,30 +57,30 @@ function checkReUserPwd() {
   return true
 }
 
-// Registration function
+// Register Function
 function regist() {
-  // Validate all form fields before registration
-  let flag1 = checkUsername()
-  let flag2 = checkUserPwd()
-  let flag3 = checkReUserPwd()
+  const flag1 = checkUsername()
+  const flag2 = checkUserPwd()
+  const flag3 = checkReUserPwd()
 
   if (flag1 && flag2 && flag3) {
-    // Pure front-end demonstration:
-    // Save the username and password temporarily in localStorage.
-    // This is only for classroom demonstration.
+    // Save to localStorage (for pure frontend demo)
     localStorage.setItem('username', registUser.username)
     localStorage.setItem('userPwd', registUser.userPwd)
 
-    alert('Registration successful. Please log in.')
+    alert('Registration successful! Please login now.')
 
-    // Jump to the login page
+    // Clear form
+    clearForm()
+
+    // Redirect to login page
     router.push('/login')
   } else {
-    alert('Validation failed. Please check your input again.')
+    alert('Please correct the errors before registering.')
   }
 }
 
-// Clear all form data and messages
+// Clear Form
 function clearForm() {
   registUser.username = ''
   registUser.userPwd = ''
@@ -106,114 +93,173 @@ function clearForm() {
 </script>
 
 <template>
-  <div>
-    <h3 class="ht">Register</h3>
+  <div class="register-container">
+    <div class="register-card">
+      <h2>📝 Create Account</h2>
+      <p class="subtitle">Join us and start managing your schedule</p>
 
-    <table class="tab" cellspacing="0px">
-      <tr class="ltr">
-        <td>Please enter username</td>
-        <td>
-          <input
-            class="ipt"
-            id="usernameInput"
-            type="text"
-            name="username"
-            v-model="registUser.username"
-            @blur="checkUsername()"
-          />
+      <div class="form-group">
+        <label>Username</label>
+        <input
+          type="text"
+          v-model="registUser.username"
+          @blur="checkUsername"
+          placeholder="Enter username (5-10 characters)"
+        />
+        <span class="msg" :class="{ success: usernameMsg === 'Available', error: usernameMsg && usernameMsg !== 'Available' }">
+          {{ usernameMsg }}
+        </span>
+      </div>
 
-          <span id="usernameMsg" class="msg" v-text="usernameMsg"></span>
-        </td>
-      </tr>
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="password"
+          v-model="registUser.userPwd"
+          @blur="checkUserPwd"
+          placeholder="Enter 6-digit password"
+        />
+        <span class="msg" :class="{ success: userPwdMsg === 'OK', error: userPwdMsg && userPwdMsg !== 'OK' }">
+          {{ userPwdMsg }}
+        </span>
+      </div>
 
-      <tr class="ltr">
-        <td>Please enter password</td>
-        <td>
-          <input
-            class="ipt"
-            id="userPwdInput"
-            type="password"
-            name="userPwd"
-            v-model="registUser.userPwd"
-            @blur="checkUserPwd()"
-          />
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input
+          type="password"
+          v-model="reUserPwd"
+          @blur="checkReUserPwd"
+          placeholder="Re-enter your password"
+        />
+        <span class="msg" :class="{ success: reUserPwdMsg === 'OK', error: reUserPwdMsg && reUserPwdMsg !== 'OK' }">
+          {{ reUserPwdMsg }}
+        </span>
+      </div>
 
-          <span id="userPwdMsg" class="msg" v-text="userPwdMsg"></span>
-        </td>
-      </tr>
+      <div class="actions">
+        <button class="btn btn-primary" @click="regist">Register</button>
+        <button class="btn btn-secondary" @click="clearForm">Clear</button>
+      </div>
 
-      <tr class="ltr">
-        <td>Confirm password</td>
-        <td>
-          <input
-            class="ipt"
-            id="reUserPwdInput"
-            type="password"
-            v-model="reUserPwd"
-            @blur="checkReUserPwd()"
-          />
-
-          <span id="reUserPwdMsg" class="msg" v-text="reUserPwdMsg"></span>
-        </td>
-      </tr>
-
-      <tr class="ltr">
-        <td colspan="2" class="buttonContainer">
-          <input class="btn1" type="button" @click="regist()" value="Register" />
-          <input class="btn1" type="button" @click="clearForm()" value="Reset" />
-
-          <router-link to="/login">
-            <button class="btn1" type="button">Login</button>
-          </router-link>
-        </td>
-      </tr>
-    </table>
+      <div class="login-link">
+        Already have an account? 
+        <router-link to="/login">Login here</router-link>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* Title style */
-.ht {
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 85vh;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+}
+
+.register-card {
+  background: white;
+  padding: 40px 35px;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+}
+
+h2 {
   text-align: center;
-  color: cadetblue;
-  font-family: Arial, sans-serif;
+  color: #2c3e50;
+  margin-bottom: 8px;
 }
 
-/* Table container style */
-.tab {
-  width: 500px;
-  border: 5px solid cadetblue;
-  margin: 0px auto;
-  border-radius: 5px;
-  font-family: Arial, sans-serif;
+.subtitle {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 30px;
 }
 
-/* Table cell border style */
-.ltr td {
-  border: 1px solid powderblue;
+.form-group {
+  margin-bottom: 22px;
 }
 
-/* Input box style */
-.ipt {
-  border: 0px;
-  width: 50%;
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #34495e;
 }
 
-/* Button style */
-.btn1 {
-  border: 2px solid powderblue;
-  border-radius: 4px;
-  width: 80px;
-  background-color: antiquewhite;
+input {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #dfe4ea;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s;
 }
 
-/* Validation message style */
+input:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
 .msg {
-  color: goldenrod;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: block;
 }
 
-/* Center the buttons */
-.buttonContainer {
+.success { color: #27ae60; }
+.error { color: #e74c3c; }
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #27ae60;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #219653;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.login-link {
   text-align: center;
+  margin-top: 25px;
+  color: #7f8c8d;
+}
+
+.login-link a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
 }
 </style>
