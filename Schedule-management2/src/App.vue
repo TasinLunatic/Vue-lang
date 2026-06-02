@@ -13,14 +13,6 @@ import Header from './components/Header.vue'
 </template>
 
 <style scoped>
-.app {
-  min-height: 100vh;
-  background-color: #f8f9fa;
-}
-
-.main-content {
-  padding: 20px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
+.app { min-height: 100vh; background: #f8f9fa; }
+.main-content { padding: 30px 20px; max-width: 900px; margin: 0 auto; }
 </style>
