@@ -21,7 +21,6 @@ function register() {
     return;
   }
 
-  // Save to localStorage
   localStorage.setItem("username", user.username);
   localStorage.setItem("userPwd", user.password);
 
@@ -71,7 +70,6 @@ function register() {
   text-align: center;
 }
 
-/* Form layout */
 .form-card h2 {
   margin-bottom: 18px;
   font-size: 1.5rem;
