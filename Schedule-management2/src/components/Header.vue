@@ -20,17 +20,26 @@ function logout() {
 
 <template>
   <header class="header">
-    <h1>📅 Simple Schedule</h1>
-    
-    <div class="nav">
-      <div v-if="!username">
-        <router-link to="/login"><button class="btn">Login</button></router-link>
-        <router-link to="/regist"><button class="btn">Register</button></router-link>
-      </div>
-      <div v-else>
-        Welcome, <strong>{{ username }}</strong>
-        <router-link to="/showSchedule"><button class="btn">My Schedule</button></router-link>
-        <button class="btn logout" @click="logout">Logout</button>
+    <div class="header-container">
+      <h1 class="logo">📅 Schedule Manager</h1>
+      
+      <div class="nav">
+        <div v-if="!username" class="auth-buttons">
+          <router-link to="/login">
+            <button class="nav-btn login-btn">Login</button>
+          </router-link>
+          <router-link to="/regist">
+            <button class="nav-btn register-btn">Register</button>
+          </router-link>
+        </div>
+        
+        <div v-else class="user-section">
+          <span class="welcome-text">Welcome, <strong>{{ username }}</strong></span>
+          <router-link to="/showSchedule">
+            <button class="nav-btn schedule-btn">My Schedule</button>
+          </router-link>
+          <button class="nav-btn logout-btn" @click="logout">Logout</button>
+        </div>
       </div>
     </div>
   </header>
@@ -38,18 +47,70 @@ function logout() {
 
 <style scoped>
 .header {
-  background: #2c3e50;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
   color: white;
-  padding: 15px 25px;
+  padding: 18px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.header-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.nav button {
-  margin-left: 10px;
-  padding: 8px 16px;
+.logo {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
 }
 
-.logout { background: #e74c3c; color: white; }
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.login-btn {
+  background: #3498db;
+  color: white;
+}
+
+.register-btn {
+  background: #2ecc71;
+  color: white;
+}
+
+.schedule-btn {
+  background: #3498db;
+  color: white;
+}
+
+.logout-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.welcome-text {
+  margin-right: 15px;
+  font-size: 1.1rem;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+}
 </style>
