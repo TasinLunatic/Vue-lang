@@ -1,19 +1,19 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
 
-const router = useRouter()
-const username = ref('')
+const router = useRouter();
+const username = ref("");
 
 onMounted(() => {
-  username.value = sessionStorage.getItem('loginUser') || ''
-})
+  username.value = sessionStorage.getItem("loginUser") || "";
+});
 
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
-    sessionStorage.removeItem('loginUser')
-    username.value = ''
-    router.push('/login')
+  if (confirm("Are you sure you want to logout?")) {
+    sessionStorage.removeItem("loginUser");
+    username.value = "";
+    router.push("/login");
   }
 }
 </script>
@@ -22,7 +22,7 @@ function logout() {
   <header class="header">
     <div class="header-container">
       <h1 class="logo">📅 Schedule Manager</h1>
-      
+
       <div class="nav">
         <div v-if="!username" class="auth-buttons">
           <router-link to="/login">
@@ -32,9 +32,11 @@ function logout() {
             <button class="nav-btn register-btn">Register</button>
           </router-link>
         </div>
-        
+
         <div v-else class="user-section">
-          <span class="welcome-text">Welcome, <strong>{{ username }}</strong></span>
+          <span class="welcome-text"
+            >Welcome, <strong>{{ username }}</strong></span
+          >
           <router-link to="/showSchedule">
             <button class="nav-btn schedule-btn">My Schedule</button>
           </router-link>
@@ -47,7 +49,8 @@ function logout() {
 
 <style scoped>
 .header {
-  background: linear-gradient(135deg, #2c3e50, #34495e);
+  /* Updated nav bar color: deep navy to teal gradient */
+  background: linear-gradient(135deg, #0f172a, #0ea5a4);
   color: white;
   padding: 18px 0;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -71,6 +74,11 @@ function logout() {
 .nav {
   display: flex;
   align-items: center;
+  gap: 12px;
+}
+
+.auth-buttons {
+  display: flex;
   gap: 12px;
 }
 
