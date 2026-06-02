@@ -1,9 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 // Import Components
-import Login from './components/Login.vue'
-import Regist from './components/Regist.vue'
-import ShowSchedule from './components/ShowSchedule.vue'
+import Login from '../components/Login.vue'
+import Regist from '../components/Regist.vue'
+import ShowSchedule from '../components/ShowSchedule.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
