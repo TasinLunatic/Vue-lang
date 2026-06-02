@@ -1,61 +1,36 @@
 <script setup>
-import { defineUser } from "../store/userStore.js";
-import { defineSchedule } from "../store/scheduleStore.js";
-import { useRouter } from "vue-router";
-import { onMounted } from "vue";
+import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
 
-const sysUser = defineUser();
-const schedule = defineSchedule();
-const router = useRouter();
+const router = useRouter()
+const username = ref('')
 
 onMounted(() => {
-  const loginUser = sessionStorage.getItem("loginUser");
-  if (loginUser) {
-    sysUser.username = loginUser;
-    sysUser.uid = 1;
-  }
-});
+  username.value = sessionStorage.getItem('loginUser') || ''
+})
 
 function logout() {
-  if (confirm("Are you sure you want to logout?")) {
-    sysUser.$reset();
-    schedule.$reset();
-    sessionStorage.removeItem("loginUser");
-    router.push("/login");
-
-    alert("You have been logged out successfully.");
+  if (confirm('Are you sure you want to logout?')) {
+    sessionStorage.removeItem('loginUser')
+    username.value = ''
+    router.push('/login')
   }
 }
 </script>
 
 <template>
   <header class="header">
-    <div class="container">
-      <h1 class="title">📅 Schedule Manager</h1>
-
-      <div class="nav">
-        <!-- Show Login/Register when NOT logged in -->
-        <div v-if="!sysUser.username" class="auth-buttons">
-          <router-link to="/login">
-            <button class="btn btn-primary">Login</button>
-          </router-link>
-          <router-link to="/regist">
-            <button class="btn btn-secondary">Register</button>
-          </router-link>
-        </div>
-
-        <!-- Show Welcome + Buttons when logged in -->
-        <div v-else class="user-info">
-          <span class="welcome"
-            >Welcome, <strong>{{ sysUser.username }}</strong></span
-          >
-
-          <router-link to="/showSchedule">
-            <button class="btn btn-primary">My Schedule</button>
-          </router-link>
-
-          <button class="btn btn-danger" @click="logout">Logout</button>
-        </div>
+    <h1>📅 Simple Schedule</h1>
+    
+    <div class="nav">
+      <div v-if="!username">
+        <router-link to="/login"><button class="btn">Login</button></router-link>
+        <router-link to="/regist"><button class="btn">Register</button></router-link>
+      </div>
+      <div v-else>
+        Welcome, <strong>{{ username }}</strong>
+        <router-link to="/showSchedule"><button class="btn">My Schedule</button></router-link>
+        <button class="btn logout" @click="logout">Logout</button>
       </div>
     </div>
   </header>
@@ -63,69 +38,18 @@ function logout() {
 
 <style scoped>
 .header {
-  background: linear-gradient(135deg, #2c3e50, #3498db);
+  background: #2c3e50;
   color: white;
-  padding: 1rem 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
+  padding: 15px 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
 }
 
-.title {
-  margin: 0;
-  font-size: 1.8rem;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
+.nav button {
   margin-left: 10px;
-  transition: all 0.3s;
+  padding: 8px 16px;
 }
 
-.btn-primary {
-  background: #3498db;
-  color: white;
-}
-.btn-primary:hover {
-  background: #2980b9;
-}
-
-.btn-secondary {
-  background: #2ecc71;
-  color: white;
-}
-.btn-secondary:hover {
-  background: #27ae60;
-}
-
-.btn-danger {
-  background: #e74c3c;
-  color: white;
-}
-.btn-danger:hover {
-  background: #c0392b;
-  transform: translateY(-2px);
-}
-
-.welcome {
-  margin-right: 15px;
-  font-size: 1.1rem;
-}
+.logout { background: #e74c3c; color: white; }
 </style>
